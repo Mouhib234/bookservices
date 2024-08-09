@@ -1,0 +1,3 @@
+com\bookstore\catalogService\ContainerConfig.class
+com\bookstore\catalogService\TestCatalogServiceApp.class
+com\bookstore\catalogService\CatalogServiceAppTests.class
