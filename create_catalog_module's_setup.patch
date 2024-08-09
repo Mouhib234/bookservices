@@ -1,0 +1,930 @@
+Subject: [PATCH] create catalog module's setup
+---
+Index: catalogService/.mvn/wrapper/maven-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/catalogService/.mvn/wrapper/maven-wrapper.properties b/catalogService/.mvn/wrapper/maven-wrapper.properties
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/.mvn/wrapper/maven-wrapper.properties	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,19 @@
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#   http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++wrapperVersion=3.3.2
++distributionType=only-script
++distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.8/apache-maven-3.9.8-bin.zip
+Index: catalogService/mvnw
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/mvnw b/catalogService/mvnw
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/mvnw	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,259 @@
++#!/bin/sh
++# ----------------------------------------------------------------------------
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++# ----------------------------------------------------------------------------
++
++# ----------------------------------------------------------------------------
++# Apache Maven Wrapper startup batch script, version 3.3.2
++#
++# Optional ENV vars
++# -----------------
++#   JAVA_HOME - location of a JDK home dir, required when download maven via java source
++#   MVNW_REPOURL - repo url base for downloading maven distribution
++#   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven
++#   MVNW_VERBOSE - true: enable verbose log; debug: trace the mvnw script; others: silence the output
++# ----------------------------------------------------------------------------
++
++set -euf
++[ "${MVNW_VERBOSE-}" != debug ] || set -x
++
++# OS specific support.
++native_path() { printf %s\\n "$1"; }
++case "$(uname)" in
++CYGWIN* | MINGW*)
++  [ -z "${JAVA_HOME-}" ] || JAVA_HOME="$(cygpath --unix "$JAVA_HOME")"
++  native_path() { cygpath --path --windows "$1"; }
++  ;;
++esac
++
++# set JAVACMD and JAVACCMD
++set_java_home() {
++  # For Cygwin and MinGW, ensure paths are in Unix format before anything is touched
++  if [ -n "${JAVA_HOME-}" ]; then
++    if [ -x "$JAVA_HOME/jre/sh/java" ]; then
++      # IBM's JDK on AIX uses strange locations for the executables
++      JAVACMD="$JAVA_HOME/jre/sh/java"
++      JAVACCMD="$JAVA_HOME/jre/sh/javac"
++    else
++      JAVACMD="$JAVA_HOME/bin/java"
++      JAVACCMD="$JAVA_HOME/bin/javac"
++
++      if [ ! -x "$JAVACMD" ] || [ ! -x "$JAVACCMD" ]; then
++        echo "The JAVA_HOME environment variable is not defined correctly, so mvnw cannot run." >&2
++        echo "JAVA_HOME is set to \"$JAVA_HOME\", but \"\$JAVA_HOME/bin/java\" or \"\$JAVA_HOME/bin/javac\" does not exist." >&2
++        return 1
++      fi
++    fi
++  else
++    JAVACMD="$(
++      'set' +e
++      'unset' -f command 2>/dev/null
++      'command' -v java
++    )" || :
++    JAVACCMD="$(
++      'set' +e
++      'unset' -f command 2>/dev/null
++      'command' -v javac
++    )" || :
++
++    if [ ! -x "${JAVACMD-}" ] || [ ! -x "${JAVACCMD-}" ]; then
++      echo "The java/javac command does not exist in PATH nor is JAVA_HOME set, so mvnw cannot run." >&2
++      return 1
++    fi
++  fi
++}
++
++# hash string like Java String::hashCode
++hash_string() {
++  str="${1:-}" h=0
++  while [ -n "$str" ]; do
++    char="${str%"${str#?}"}"
++    h=$(((h * 31 + $(LC_CTYPE=C printf %d "'$char")) % 4294967296))
++    str="${str#?}"
++  done
++  printf %x\\n $h
++}
++
++verbose() { :; }
++[ "${MVNW_VERBOSE-}" != true ] || verbose() { printf %s\\n "${1-}"; }
++
++die() {
++  printf %s\\n "$1" >&2
++  exit 1
++}
++
++trim() {
++  # MWRAPPER-139:
++  #   Trims trailing and leading whitespace, carriage returns, tabs, and linefeeds.
++  #   Needed for removing poorly interpreted newline sequences when running in more
++  #   exotic environments such as mingw bash on Windows.
++  printf "%s" "${1}" | tr -d '[:space:]'
++}
++
++# parse distributionUrl and optional distributionSha256Sum, requires .mvn/wrapper/maven-wrapper.properties
++while IFS="=" read -r key value; do
++  case "${key-}" in
++  distributionUrl) distributionUrl=$(trim "${value-}") ;;
++  distributionSha256Sum) distributionSha256Sum=$(trim "${value-}") ;;
++  esac
++done <"${0%/*}/.mvn/wrapper/maven-wrapper.properties"
++[ -n "${distributionUrl-}" ] || die "cannot read distributionUrl property in ${0%/*}/.mvn/wrapper/maven-wrapper.properties"
++
++case "${distributionUrl##*/}" in
++maven-mvnd-*bin.*)
++  MVN_CMD=mvnd.sh _MVNW_REPO_PATTERN=/maven/mvnd/
++  case "${PROCESSOR_ARCHITECTURE-}${PROCESSOR_ARCHITEW6432-}:$(uname -a)" in
++  *AMD64:CYGWIN* | *AMD64:MINGW*) distributionPlatform=windows-amd64 ;;
++  :Darwin*x86_64) distributionPlatform=darwin-amd64 ;;
++  :Darwin*arm64) distributionPlatform=darwin-aarch64 ;;
++  :Linux*x86_64*) distributionPlatform=linux-amd64 ;;
++  *)
++    echo "Cannot detect native platform for mvnd on $(uname)-$(uname -m), use pure java version" >&2
++    distributionPlatform=linux-amd64
++    ;;
++  esac
++  distributionUrl="${distributionUrl%-bin.*}-$distributionPlatform.zip"
++  ;;
++maven-mvnd-*) MVN_CMD=mvnd.sh _MVNW_REPO_PATTERN=/maven/mvnd/ ;;
++*) MVN_CMD="mvn${0##*/mvnw}" _MVNW_REPO_PATTERN=/org/apache/maven/ ;;
++esac
++
++# apply MVNW_REPOURL and calculate MAVEN_HOME
++# maven home pattern: ~/.m2/wrapper/dists/{apache-maven-<version>,maven-mvnd-<version>-<platform>}/<hash>
++[ -z "${MVNW_REPOURL-}" ] || distributionUrl="$MVNW_REPOURL$_MVNW_REPO_PATTERN${distributionUrl#*"$_MVNW_REPO_PATTERN"}"
++distributionUrlName="${distributionUrl##*/}"
++distributionUrlNameMain="${distributionUrlName%.*}"
++distributionUrlNameMain="${distributionUrlNameMain%-bin}"
++MAVEN_USER_HOME="${MAVEN_USER_HOME:-${HOME}/.m2}"
++MAVEN_HOME="${MAVEN_USER_HOME}/wrapper/dists/${distributionUrlNameMain-}/$(hash_string "$distributionUrl")"
++
++exec_maven() {
++  unset MVNW_VERBOSE MVNW_USERNAME MVNW_PASSWORD MVNW_REPOURL || :
++  exec "$MAVEN_HOME/bin/$MVN_CMD" "$@" || die "cannot exec $MAVEN_HOME/bin/$MVN_CMD"
++}
++
++if [ -d "$MAVEN_HOME" ]; then
++  verbose "found existing MAVEN_HOME at $MAVEN_HOME"
++  exec_maven "$@"
++fi
++
++case "${distributionUrl-}" in
++*?-bin.zip | *?maven-mvnd-?*-?*.zip) ;;
++*) die "distributionUrl is not valid, must match *-bin.zip or maven-mvnd-*.zip, but found '${distributionUrl-}'" ;;
++esac
++
++# prepare tmp dir
++if TMP_DOWNLOAD_DIR="$(mktemp -d)" && [ -d "$TMP_DOWNLOAD_DIR" ]; then
++  clean() { rm -rf -- "$TMP_DOWNLOAD_DIR"; }
++  trap clean HUP INT TERM EXIT
++else
++  die "cannot create temp dir"
++fi
++
++mkdir -p -- "${MAVEN_HOME%/*}"
++
++# Download and Install Apache Maven
++verbose "Couldn't find MAVEN_HOME, downloading and installing it ..."
++verbose "Downloading from: $distributionUrl"
++verbose "Downloading to: $TMP_DOWNLOAD_DIR/$distributionUrlName"
++
++# select .zip or .tar.gz
++if ! command -v unzip >/dev/null; then
++  distributionUrl="${distributionUrl%.zip}.tar.gz"
++  distributionUrlName="${distributionUrl##*/}"
++fi
++
++# verbose opt
++__MVNW_QUIET_WGET=--quiet __MVNW_QUIET_CURL=--silent __MVNW_QUIET_UNZIP=-q __MVNW_QUIET_TAR=''
++[ "${MVNW_VERBOSE-}" != true ] || __MVNW_QUIET_WGET='' __MVNW_QUIET_CURL='' __MVNW_QUIET_UNZIP='' __MVNW_QUIET_TAR=v
++
++# normalize http auth
++case "${MVNW_PASSWORD:+has-password}" in
++'') MVNW_USERNAME='' MVNW_PASSWORD='' ;;
++has-password) [ -n "${MVNW_USERNAME-}" ] || MVNW_USERNAME='' MVNW_PASSWORD='' ;;
++esac
++
++if [ -z "${MVNW_USERNAME-}" ] && command -v wget >/dev/null; then
++  verbose "Found wget ... using wget"
++  wget ${__MVNW_QUIET_WGET:+"$__MVNW_QUIET_WGET"} "$distributionUrl" -O "$TMP_DOWNLOAD_DIR/$distributionUrlName" || die "wget: Failed to fetch $distributionUrl"
++elif [ -z "${MVNW_USERNAME-}" ] && command -v curl >/dev/null; then
++  verbose "Found curl ... using curl"
++  curl ${__MVNW_QUIET_CURL:+"$__MVNW_QUIET_CURL"} -f -L -o "$TMP_DOWNLOAD_DIR/$distributionUrlName" "$distributionUrl" || die "curl: Failed to fetch $distributionUrl"
++elif set_java_home; then
++  verbose "Falling back to use Java to download"
++  javaSource="$TMP_DOWNLOAD_DIR/Downloader.java"
++  targetZip="$TMP_DOWNLOAD_DIR/$distributionUrlName"
++  cat >"$javaSource" <<-END
++	public class Downloader extends java.net.Authenticator
++	{
++	  protected java.net.PasswordAuthentication getPasswordAuthentication()
++	  {
++	    return new java.net.PasswordAuthentication( System.getenv( "MVNW_USERNAME" ), System.getenv( "MVNW_PASSWORD" ).toCharArray() );
++	  }
++	  public static void main( String[] args ) throws Exception
++	  {
++	    setDefault( new Downloader() );
++	    java.nio.file.Files.copy( java.net.URI.create( args[0] ).toURL().openStream(), java.nio.file.Paths.get( args[1] ).toAbsolutePath().normalize() );
++	  }
++	}
++	END
++  # For Cygwin/MinGW, switch paths to Windows format before running javac and java
++  verbose " - Compiling Downloader.java ..."
++  "$(native_path "$JAVACCMD")" "$(native_path "$javaSource")" || die "Failed to compile Downloader.java"
++  verbose " - Running Downloader.java ..."
++  "$(native_path "$JAVACMD")" -cp "$(native_path "$TMP_DOWNLOAD_DIR")" Downloader "$distributionUrl" "$(native_path "$targetZip")"
++fi
++
++# If specified, validate the SHA-256 sum of the Maven distribution zip file
++if [ -n "${distributionSha256Sum-}" ]; then
++  distributionSha256Result=false
++  if [ "$MVN_CMD" = mvnd.sh ]; then
++    echo "Checksum validation is not supported for maven-mvnd." >&2
++    echo "Please disable validation by removing 'distributionSha256Sum' from your maven-wrapper.properties." >&2
++    exit 1
++  elif command -v sha256sum >/dev/null; then
++    if echo "$distributionSha256Sum  $TMP_DOWNLOAD_DIR/$distributionUrlName" | sha256sum -c >/dev/null 2>&1; then
++      distributionSha256Result=true
++    fi
++  elif command -v shasum >/dev/null; then
++    if echo "$distributionSha256Sum  $TMP_DOWNLOAD_DIR/$distributionUrlName" | shasum -a 256 -c >/dev/null 2>&1; then
++      distributionSha256Result=true
++    fi
++  else
++    echo "Checksum validation was requested but neither 'sha256sum' or 'shasum' are available." >&2
++    echo "Please install either command, or disable validation by removing 'distributionSha256Sum' from your maven-wrapper.properties." >&2
++    exit 1
++  fi
++  if [ $distributionSha256Result = false ]; then
++    echo "Error: Failed to validate Maven distribution SHA-256, your Maven distribution might be compromised." >&2
++    echo "If you updated your Maven version, you need to update the specified distributionSha256Sum property." >&2
++    exit 1
++  fi
++fi
++
++# unzip and move
++if command -v unzip >/dev/null; then
++  unzip ${__MVNW_QUIET_UNZIP:+"$__MVNW_QUIET_UNZIP"} "$TMP_DOWNLOAD_DIR/$distributionUrlName" -d "$TMP_DOWNLOAD_DIR" || die "failed to unzip"
++else
++  tar xzf${__MVNW_QUIET_TAR:+"$__MVNW_QUIET_TAR"} "$TMP_DOWNLOAD_DIR/$distributionUrlName" -C "$TMP_DOWNLOAD_DIR" || die "failed to untar"
++fi
++printf %s\\n "$distributionUrl" >"$TMP_DOWNLOAD_DIR/$distributionUrlNameMain/mvnw.url"
++mv -- "$TMP_DOWNLOAD_DIR/$distributionUrlNameMain" "$MAVEN_HOME" || [ -d "$MAVEN_HOME" ] || die "fail to move MAVEN_HOME"
++
++clean || :
++exec_maven "$@"
+Index: catalogService/mvnw.cmd
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/mvnw.cmd b/catalogService/mvnw.cmd
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/mvnw.cmd	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,149 @@
++<# : batch portion
++@REM ----------------------------------------------------------------------------
++@REM Licensed to the Apache Software Foundation (ASF) under one
++@REM or more contributor license agreements.  See the NOTICE file
++@REM distributed with this work for additional information
++@REM regarding copyright ownership.  The ASF licenses this file
++@REM to you under the Apache License, Version 2.0 (the
++@REM "License"); you may not use this file except in compliance
++@REM with the License.  You may obtain a copy of the License at
++@REM
++@REM    http://www.apache.org/licenses/LICENSE-2.0
++@REM
++@REM Unless required by applicable law or agreed to in writing,
++@REM software distributed under the License is distributed on an
++@REM "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++@REM KIND, either express or implied.  See the License for the
++@REM specific language governing permissions and limitations
++@REM under the License.
++@REM ----------------------------------------------------------------------------
++
++@REM ----------------------------------------------------------------------------
++@REM Apache Maven Wrapper startup batch script, version 3.3.2
++@REM
++@REM Optional ENV vars
++@REM   MVNW_REPOURL - repo url base for downloading maven distribution
++@REM   MVNW_USERNAME/MVNW_PASSWORD - user and password for downloading maven
++@REM   MVNW_VERBOSE - true: enable verbose log; others: silence the output
++@REM ----------------------------------------------------------------------------
++
++@IF "%__MVNW_ARG0_NAME__%"=="" (SET __MVNW_ARG0_NAME__=%~nx0)
++@SET __MVNW_CMD__=
++@SET __MVNW_ERROR__=
++@SET __MVNW_PSMODULEP_SAVE=%PSModulePath%
++@SET PSModulePath=
++@FOR /F "usebackq tokens=1* delims==" %%A IN (`powershell -noprofile "& {$scriptDir='%~dp0'; $script='%__MVNW_ARG0_NAME__%'; icm -ScriptBlock ([Scriptblock]::Create((Get-Content -Raw '%~f0'))) -NoNewScope}"`) DO @(
++  IF "%%A"=="MVN_CMD" (set __MVNW_CMD__=%%B) ELSE IF "%%B"=="" (echo %%A) ELSE (echo %%A=%%B)
++)
++@SET PSModulePath=%__MVNW_PSMODULEP_SAVE%
++@SET __MVNW_PSMODULEP_SAVE=
++@SET __MVNW_ARG0_NAME__=
++@SET MVNW_USERNAME=
++@SET MVNW_PASSWORD=
++@IF NOT "%__MVNW_CMD__%"=="" (%__MVNW_CMD__% %*)
++@echo Cannot start maven from wrapper >&2 && exit /b 1
++@GOTO :EOF
++: end batch / begin powershell #>
++
++$ErrorActionPreference = "Stop"
++if ($env:MVNW_VERBOSE -eq "true") {
++  $VerbosePreference = "Continue"
++}
++
++# calculate distributionUrl, requires .mvn/wrapper/maven-wrapper.properties
++$distributionUrl = (Get-Content -Raw "$scriptDir/.mvn/wrapper/maven-wrapper.properties" | ConvertFrom-StringData).distributionUrl
++if (!$distributionUrl) {
++  Write-Error "cannot read distributionUrl property in $scriptDir/.mvn/wrapper/maven-wrapper.properties"
++}
++
++switch -wildcard -casesensitive ( $($distributionUrl -replace '^.*/','') ) {
++  "maven-mvnd-*" {
++    $USE_MVND = $true
++    $distributionUrl = $distributionUrl -replace '-bin\.[^.]*$',"-windows-amd64.zip"
++    $MVN_CMD = "mvnd.cmd"
++    break
++  }
++  default {
++    $USE_MVND = $false
++    $MVN_CMD = $script -replace '^mvnw','mvn'
++    break
++  }
++}
++
++# apply MVNW_REPOURL and calculate MAVEN_HOME
++# maven home pattern: ~/.m2/wrapper/dists/{apache-maven-<version>,maven-mvnd-<version>-<platform>}/<hash>
++if ($env:MVNW_REPOURL) {
++  $MVNW_REPO_PATTERN = if ($USE_MVND) { "/org/apache/maven/" } else { "/maven/mvnd/" }
++  $distributionUrl = "$env:MVNW_REPOURL$MVNW_REPO_PATTERN$($distributionUrl -replace '^.*'+$MVNW_REPO_PATTERN,'')"
++}
++$distributionUrlName = $distributionUrl -replace '^.*/',''
++$distributionUrlNameMain = $distributionUrlName -replace '\.[^.]*$','' -replace '-bin$',''
++$MAVEN_HOME_PARENT = "$HOME/.m2/wrapper/dists/$distributionUrlNameMain"
++if ($env:MAVEN_USER_HOME) {
++  $MAVEN_HOME_PARENT = "$env:MAVEN_USER_HOME/wrapper/dists/$distributionUrlNameMain"
++}
++$MAVEN_HOME_NAME = ([System.Security.Cryptography.MD5]::Create().ComputeHash([byte[]][char[]]$distributionUrl) | ForEach-Object {$_.ToString("x2")}) -join ''
++$MAVEN_HOME = "$MAVEN_HOME_PARENT/$MAVEN_HOME_NAME"
++
++if (Test-Path -Path "$MAVEN_HOME" -PathType Container) {
++  Write-Verbose "found existing MAVEN_HOME at $MAVEN_HOME"
++  Write-Output "MVN_CMD=$MAVEN_HOME/bin/$MVN_CMD"
++  exit $?
++}
++
++if (! $distributionUrlNameMain -or ($distributionUrlName -eq $distributionUrlNameMain)) {
++  Write-Error "distributionUrl is not valid, must end with *-bin.zip, but found $distributionUrl"
++}
++
++# prepare tmp dir
++$TMP_DOWNLOAD_DIR_HOLDER = New-TemporaryFile
++$TMP_DOWNLOAD_DIR = New-Item -Itemtype Directory -Path "$TMP_DOWNLOAD_DIR_HOLDER.dir"
++$TMP_DOWNLOAD_DIR_HOLDER.Delete() | Out-Null
++trap {
++  if ($TMP_DOWNLOAD_DIR.Exists) {
++    try { Remove-Item $TMP_DOWNLOAD_DIR -Recurse -Force | Out-Null }
++    catch { Write-Warning "Cannot remove $TMP_DOWNLOAD_DIR" }
++  }
++}
++
++New-Item -Itemtype Directory -Path "$MAVEN_HOME_PARENT" -Force | Out-Null
++
++# Download and Install Apache Maven
++Write-Verbose "Couldn't find MAVEN_HOME, downloading and installing it ..."
++Write-Verbose "Downloading from: $distributionUrl"
++Write-Verbose "Downloading to: $TMP_DOWNLOAD_DIR/$distributionUrlName"
++
++$webclient = New-Object System.Net.WebClient
++if ($env:MVNW_USERNAME -and $env:MVNW_PASSWORD) {
++  $webclient.Credentials = New-Object System.Net.NetworkCredential($env:MVNW_USERNAME, $env:MVNW_PASSWORD)
++}
++[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
++$webclient.DownloadFile($distributionUrl, "$TMP_DOWNLOAD_DIR/$distributionUrlName") | Out-Null
++
++# If specified, validate the SHA-256 sum of the Maven distribution zip file
++$distributionSha256Sum = (Get-Content -Raw "$scriptDir/.mvn/wrapper/maven-wrapper.properties" | ConvertFrom-StringData).distributionSha256Sum
++if ($distributionSha256Sum) {
++  if ($USE_MVND) {
++    Write-Error "Checksum validation is not supported for maven-mvnd. `nPlease disable validation by removing 'distributionSha256Sum' from your maven-wrapper.properties."
++  }
++  Import-Module $PSHOME\Modules\Microsoft.PowerShell.Utility -Function Get-FileHash
++  if ((Get-FileHash "$TMP_DOWNLOAD_DIR/$distributionUrlName" -Algorithm SHA256).Hash.ToLower() -ne $distributionSha256Sum) {
++    Write-Error "Error: Failed to validate Maven distribution SHA-256, your Maven distribution might be compromised. If you updated your Maven version, you need to update the specified distributionSha256Sum property."
++  }
++}
++
++# unzip and move
++Expand-Archive "$TMP_DOWNLOAD_DIR/$distributionUrlName" -DestinationPath "$TMP_DOWNLOAD_DIR" | Out-Null
++Rename-Item -Path "$TMP_DOWNLOAD_DIR/$distributionUrlNameMain" -NewName $MAVEN_HOME_NAME | Out-Null
++try {
++  Move-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination $MAVEN_HOME_PARENT | Out-Null
++} catch {
++  if (! (Test-Path -Path "$MAVEN_HOME" -PathType Container)) {
++    Write-Error "fail to move MAVEN_HOME"
++  }
++} finally {
++  try { Remove-Item $TMP_DOWNLOAD_DIR -Recurse -Force | Out-Null }
++  catch { Write-Warning "Cannot remove $TMP_DOWNLOAD_DIR" }
++}
++
++Write-Output "MVN_CMD=$MAVEN_HOME/bin/$MVN_CMD"
+Index: catalogService/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/pom.xml b/catalogService/pom.xml
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/pom.xml	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,140 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0"
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++    <modelVersion>4.0.0</modelVersion>
++    <parent>
++        <groupId>com.mycompany.app</groupId>
++        <artifactId>microservice</artifactId>
++        <version>1.0-SNAPSHOT</version>
++    </parent>
++
++    <artifactId>catalogService</artifactId>
++
++    <properties>
++        <maven.compiler.source>21</maven.compiler.source>
++        <maven.compiler.target>21</maven.compiler.target>
++        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    </properties>
++
++    <dependencies>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-data-jpa</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-validation</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-web</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>org.flywaydb</groupId>
++            <artifactId>flyway-core</artifactId>
++            <version>10.15.2</version>
++        </dependency>
++        <dependency>
++            <groupId>org.flywaydb</groupId>
++            <artifactId>flyway-database-postgresql</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>org.springdoc</groupId>
++            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
++            <version>2.3.0</version>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-devtools</artifactId>
++            <scope>runtime</scope>
++            <optional>true</optional>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-actuator</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>io.micrometer</groupId>
++            <artifactId>micrometer-registry-prometheus</artifactId>
++            <scope>runtime</scope>
++        </dependency>
++        <dependency>
++            <groupId>io.micrometer</groupId>
++            <artifactId>micrometer-tracing-bridge-otel</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>io.opentelemetry</groupId>
++            <artifactId>opentelemetry-exporter-zipkin</artifactId>
++        </dependency>
++        <dependency>
++            <groupId>org.postgresql</groupId>
++            <artifactId>postgresql</artifactId>
++            <scope>runtime</scope>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-configuration-processor</artifactId>
++            <optional>true</optional>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-test</artifactId>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-testcontainers</artifactId>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>org.testcontainers</groupId>
++            <artifactId>junit-jupiter</artifactId>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>org.testcontainers</groupId>
++            <artifactId>postgresql</artifactId>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>io.rest-assured</groupId>
++            <artifactId>rest-assured</artifactId>
++            <scope>test</scope>
++        </dependency>
++
++    </dependencies>
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>pl.project13.maven</groupId>
++                <artifactId>git-commit-id-plugin</artifactId>
++                <version>2.2.1</version>
++            </plugin>
++            <plugin>
++                <groupId>com.diffplug.spotless</groupId>
++                <artifactId>spotless-maven-plugin</artifactId>
++                <version>2.43.0</version>
++                <configuration>
++                    <java>
++                        <importOrder />
++                        <removeUnusedImports />
++                        <palantirJavaFormat>
++                            <version>2.35.0</version>
++                        </palantirJavaFormat>
++                        <formatAnnotations />
++                    </java>
++                </configuration>
++                <executions>
++                    <execution>
++                        <phase>compile</phase>
++                        <goals>
++                            <goal>check</goal>
++                        </goals>
++                    </execution>
++                </executions>
++            </plugin>
++        </plugins>
++    </build>
++
++</project>
+\ No newline at end of file
+Index: catalogService/src/main/java/com/bookstore/catalogService/CatalogServiceApp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/src/main/java/com/bookstore/catalogService/CatalogServiceApp.java b/catalogService/src/main/java/com/bookstore/catalogService/CatalogServiceApp.java
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/src/main/java/com/bookstore/catalogService/CatalogServiceApp.java	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,11 @@
++package com.bookstore.catalogService;
++
++import org.springframework.boot.SpringApplication;
++import org.springframework.boot.autoconfigure.SpringBootApplication;
++
++@SpringBootApplication
++public class CatalogServiceApp {
++    public static void main(String[] args) {
++        SpringApplication.run(CatalogServiceApp.class, args);
++    }
++}
+Index: catalogService/src/main/resources/application.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/src/main/resources/application.yml b/catalogService/src/main/resources/application.yml
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/src/main/resources/application.yml	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,8 @@
++server:
++  port: 8081
++  shutdown: graceful
++spring:
++  datasource:
++    url: ${DB_URL:jdbc:postgresql://localhost:15432/postgres}
++    username: ${DB_USERNAME:postgres}
++    password: ${DB_PASSWORD:postgres}
+\ No newline at end of file
+Index: catalogService/src/test/java/com/bookstore/catalogService/CatalogServiceAppTests.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/src/test/java/com/bookstore/catalogService/CatalogServiceAppTests.java b/catalogService/src/test/java/com/bookstore/catalogService/CatalogServiceAppTests.java
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/src/test/java/com/bookstore/catalogService/CatalogServiceAppTests.java	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,12 @@
++package com.bookstore.catalogService;
++
++import org.junit.Test;
++import org.springframework.boot.test.context.SpringBootTest;
++import org.springframework.context.annotation.Import;
++
++@SpringBootTest
++@Import(ContainerConfig.class)
++public class CatalogServiceAppTests {
++    @Test
++    public void contextLoads() {}
++}
+Index: catalogService/src/test/java/com/bookstore/catalogService/ContainerConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/src/test/java/com/bookstore/catalogService/ContainerConfig.java b/catalogService/src/test/java/com/bookstore/catalogService/ContainerConfig.java
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/src/test/java/com/bookstore/catalogService/ContainerConfig.java	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,16 @@
++package com.bookstore.catalogService;
++
++import org.springframework.boot.test.context.TestConfiguration;
++import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
++import org.springframework.context.annotation.Bean;
++import org.testcontainers.containers.PostgreSQLContainer;
++import org.testcontainers.utility.DockerImageName;
++
++@TestConfiguration(proxyBeanMethods = false)
++public class ContainerConfig {
++    @Bean
++    @ServiceConnection
++    PostgreSQLContainer<?> postgresContainer() {
++        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:16-alpine"));
++    }
++}
+Index: catalogService/src/test/java/com/bookstore/catalogService/TestCatalogServiceApp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/src/test/java/com/bookstore/catalogService/TestCatalogServiceApp.java b/catalogService/src/test/java/com/bookstore/catalogService/TestCatalogServiceApp.java
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/src/test/java/com/bookstore/catalogService/TestCatalogServiceApp.java	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,12 @@
++package com.bookstore.catalogService;
++
++import org.springframework.boot.SpringApplication;
++
++public class TestCatalogServiceApp {
++
++    public static void main(String[] args) {
++        SpringApplication.from(CatalogServiceApp::main)
++                .with(ContainerConfig.class)
++                .run(args);
++    }
++}
+Index: catalogService/target/classes/application.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/target/classes/application.yml b/catalogService/target/classes/application.yml
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/classes/application.yml	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,8 @@
++server:
++  port: 8081
++  shutdown: graceful
++spring:
++  datasource:
++    url: ${DB_URL:jdbc:postgresql://localhost:15432/postgres}
++    username: ${DB_USERNAME:postgres}
++    password: ${DB_PASSWORD:postgres}
+\ No newline at end of file
+Index: catalogService/target/maven-archiver/pom.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/catalogService/target/maven-archiver/pom.properties b/catalogService/target/maven-archiver/pom.properties
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/maven-archiver/pom.properties	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,4 @@
++#Created by Apache Maven 3.9.8
++artifactId=catalogService
++groupId=com.mycompany.app
++version=1.0-SNAPSHOT
+Index: catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst b/catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,1 @@
++com\bookstore\catalogService\CatalogServiceApp.class
+Index: catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst b/catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,1 @@
++C:\Users\Mouhib\Desktop\my-app\catalogService\src\main\java\com\bookstore\catalogService\CatalogServiceApp.java
+Index: catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst b/catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,3 @@
++com\bookstore\catalogService\ContainerConfig.class
++com\bookstore\catalogService\TestCatalogServiceApp.class
++com\bookstore\catalogService\CatalogServiceAppTests.class
+Index: catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst b/catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,3 @@
++C:\Users\Mouhib\Desktop\my-app\catalogService\src\test\java\com\bookstore\catalogService\CatalogServiceAppTests.java
++C:\Users\Mouhib\Desktop\my-app\catalogService\src\test\java\com\bookstore\catalogService\ContainerConfig.java
++C:\Users\Mouhib\Desktop\my-app\catalogService\src\test\java\com\bookstore\catalogService\TestCatalogServiceApp.java
+Index: catalogService/target/spotless-index
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/catalogService/target/spotless-index b/catalogService/target/spotless-index
+new file mode 100644
+--- /dev/null	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
++++ b/catalogService/target/spotless-index	(revision 2913b6506042dad3a271b20e522ebc3c2da13099)
+@@ -0,0 +1,5 @@
++yRQluixvBFYrGp39mp65Eq54wn5gaInzxeOri47TCyk=
++src\main\java\com\bookstore\catalogService\CatalogServiceApp.java 2024-08-09T21:10:22.018844300Z
++src\test\java\com\bookstore\catalogService\CatalogServiceAppTests.java 2024-08-09T21:16:36.338909900Z
++src\test\java\com\bookstore\catalogService\ContainerConfig.java 2024-08-09T21:20:59.751591300Z
++src\test\java\com\bookstore\catalogService\TestCatalogServiceApp.java 2024-08-09T21:20:59.934160200Z
+diff --git a/catalogService/target/catalogService-1.0-SNAPSHOT.jar b/catalogService/target/catalogService-1.0-SNAPSHOT.jar
+new file mode 100644
+index 0000000000000000000000000000000000000000..11ed88566f37417881c19469ba5a11e49f8385c1
+GIT binary patch
+literal 3427
+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
+
+diff --git a/catalogService/target/classes/com/bookstore/catalogService/CatalogServiceApp.class b/catalogService/target/classes/com/bookstore/catalogService/CatalogServiceApp.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..5b3e5dc5624e0e83f9b38b439eb776450346d609
+GIT binary patch
+literal 733
+zc$}3|O-~y!5PgP_O}1&Fp-l_zrMHj+?x~klNOYy1R#a-LaNy)!%+|1LM_w=O-|7j}
+zLw`Vj6k=>vB8Xh@;f?0&jpy0_Z~p!RaESLY*03I-Gr$JA3|r^oQt(pff`7}-W$qZd
+zpOsebfMI>SH;>R`*w0PHGh;4lXRPG8aH2HDOxjD8OP)M%4;PCVF`h*j4DcK;7$(LR
+zyk1zPi!&=K`ODY~&*u0n1gWD`#Hoy?nYJO!#_9dNl2X+5^kgYAbG~o7m#$*Yjdt?4
+z<B8E{s%WgpO1U&5xl2zOI*B=z44bLa@~EjYX@B@yhGA-QQO<=`-fx2)_fypjAJeC4
+z;pbFB(N3fBsukvx7q%eg?G<T;cxD=#%dg7cVf2W8-?uRAd~dW<m7J?u`E|86E^JG@
+z2P;(y`isVyyp>6|uknQvOL9%|0TF!}f7ZbKry<-VkCSC&HzrqLe?oeTup5FAUJ?%O
+w3NXYr**;$3b=&+YkO946G`U9q_`W|5!}`P!FLCrR!kbX@HsB6++ga~`Th4gGDgXcg
+
+diff --git a/catalogService/target/test-classes/com/bookstore/catalogService/CatalogServiceAppTests.class b/catalogService/target/test-classes/com/bookstore/catalogService/CatalogServiceAppTests.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..7f06c39d1c0492033eec71de6175da8fca98d5ea
+GIT binary patch
+literal 668
+zc$}S4OG^VW5T5jDAKF@9h$nA8pgD+MDncy?!lGbHFP_qEx~APtmTb2Aw>$|R`~m(b
+zaS~TiEC}W>U*_@6e3`tyJ-+}z7q+U9gM1kZbtpoKKy%9GjD}1G^m;Vqz9CRL6;hZp
+z0{OlDVHuVP9Qi7uBc*1EQJPbq85XLb&-GmRoc4aW-8dfb#3Td?JvHV88lI5+Dvd^5
+z57;QgNXt_`3x`Y#>u14&xf4h__Wm)eL!j;}Y50Tj6dPlk?VD5@5%Hl&1h(%=sSGnh
+zNz64pr2{%m@sZThkzMVpRQvowSS34)hqUdc2%I=}5^EuYiDnVMS9)dz8)~qOW;$r!
+zRh(lyn?V;6Kg-#dLV6j+N?S&8&cYN0wg1=&wqUqpjhBfCI<O06{A7D_K<qc8t)NE{
+z31ac!3CN>MSJ9SSumUx-^^XF?Wkdoin9Vuzq4VK4vG$EfGGZgkHeKzivn>~G;cX3Z
+M9kUy^Kz!JI2W@GqtpET3
+
+diff --git a/catalogService/target/test-classes/com/bookstore/catalogService/ContainerConfig.class b/catalogService/target/test-classes/com/bookstore/catalogService/ContainerConfig.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a85855b38679899063d337350c53a3d3dccf889
+GIT binary patch
+literal 1098
+zc$}S6+fExX5IxQnLINSB7ka-pM1>U(y#}GuRF#mn=_M#q`{pcWG1;smub0AKwNF&7
+z)DP%KRUL0ailPXWuCz1unVIA9vHk1!_n!bZ@SuPc(s^Wx$Rfv3-sAh+33%u`Z##R!
+zGYq*k8A`LxkghJZ^O#~-RoZuqh>WK~!(}LR<eV73Q<3qtXuWqE$KVtS43+*M5ItXg
+zyv&0>1qvvll*eolb0{;^CJ@I)2GSfluawsndb7uU(d0eBknM9Fk$+Kj|2Ew+T84go
+z$^CbxdI5P<?EcR&IMuUMT0PD)JoHr0=_u8WjMBpKxZ#2FTSD(kPdFnHXs{!FhD<|k
+zQ{Qtgfz7zr5qgVv0zxXT@_5kZTH5&#%$QvnF|4>}S)|S|f2{T>#PFy(QJB-uj<}{<
+z(hs?bHTCoKe>m1^>qN8oAr6h~iMEU+?QJ6rmElIJkoLEnkVbubd^?)N{j791VHF3)
+z;iFXNrQjiPH7DkiK4!eLXebduAzf(8F;uNFLWr=?QnB{LYiUJa7}Imb-Y|w|r!P8c
+zcZ(*2!dUYmf4Q&K!J+N`jWD}vJ4(ZTx3EAj(0(Z}`v%EgpqWFSk<ZqSz`iEoi)3>N
+zSimK+#X$lVaXBHlf~!a;#ZSoFSm_7yA1l+}Fmr_YFJmOLCrC;|l50uMb=*i6N#SPF
+Vp~Y?|_D&L+p_;q&-}{97e*ns+JBa`Q
+
+diff --git a/catalogService/target/test-classes/com/bookstore/catalogService/TestCatalogServiceApp.class b/catalogService/target/test-classes/com/bookstore/catalogService/TestCatalogServiceApp.class
+new file mode 100644
+index 0000000000000000000000000000000000000000..caa9d7a89a8d7a256da4a59dd1fb4bd75b67f5be
+GIT binary patch
+literal 1702
+zc$}S8YflqF6g@*r*OpaE5tOPZ2+~$$6%ijr6e>i_`iN~H#!u7jv|ZTUY4!o~v;2aF
+zM1O$sHyQ7?jUd!Ux*z6o@0@e*oSC`%<JaML04rEepbrrRQ5F4&F(kM7F4rvX)U>zd
+zZDIHfu_e<n{bhzoCcBv;)HxM#Bp8OdVTgvmW%~8CPvOXv4#Q$5t4p`0c@5WeYE_rp
+zVo$m|THu?ORt+2@T&9)kuG}MkK{{Sw3pbyDit`FCs2D_&A=inbETyj%o5qz!!!ixt
+z3K^}s(q^zSy#(%@ZRb!^D?!Z`jxQ>C1u2HXBee<^_dEp`8D<S>hxi@Om#)wV$t_tc
+z3U}8ughp|FZaTuHLDj4!Fp5hGE~^+rnqi@rTu6XDIs=ARnUDI3jC$Q(nAcSm*Dy}!
+z?gk|C#$V(`Kg6Dm{e9p#AxOauhWV~4m4xRP{xT5}?Xw^&f@If8z&C+i7H)}`EwZF^
+zX>e<kyJk3V8>4>R^hi_v?4k06w&|D{MmuhMll<JR5&LilH$$Q*1J@AiW|&91V~DvB
+zMh|Y4#PWQXH(m?BE-PLVa||OH{p3TWpo1~oP2e8p72H>G3o{IJ-7nk8ph?US$zlQz
+z@kqgA6;D9fP9DWFon5&jG@aY!3a5;Cl^evo&oE#gpZz?ZU>nrhz)S8_Ea6S*lvL2j
+zpH}Bzz|ww0^yX}Z?2gTz_7=Eh6-{4|0_uhnKFRRK2s+gGpNF8}8Qs;hUvdVeJyNjB
+zF#TU*DR{v!-hC<6<JMwK;5yar@aqE$t2eb1G}EYO)c5DUfPHSdC#j9KjJQdy+8$3~
+zn)-NnmD=EUWDR}kLny#k3`D<S=tCqmTs*)??f_S|ju=yjhJOPL5yJ=)RKW(0v8Rzi
+qmih>CO~h@?wtWxCc8Ahjz*2Kvgldh7r^K>M{qtCy{!0a{VeB`UdG;Fs
+
